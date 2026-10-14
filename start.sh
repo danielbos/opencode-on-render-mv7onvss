@@ -12,6 +12,9 @@ GLOBAL_CONFIG_FILE="${OPENCODE_CONFIG_DIR}/opencode.json"
 
 mkdir -p "$WORKSPACE_DIR" "$OPENCODE_DATA_DIR" "$OPENCODE_CONFIG_DIR"
 
+# Headless environment: never hang waiting for interactive git credentials.
+export GIT_TERMINAL_PROMPT=0
+
 directory_is_empty() {
   [ -z "$(ls -A "$1" 2>/dev/null)" ]
 }
@@ -31,30 +34,15 @@ clone_repo() {
   local repo_url
   repo_url="$(normalize_repo_url "$REPO_URL")"
 
-  local askpass=""
-  if [ -n "${GITHUB_TOKEN:-}" ]; then
-    askpass="$(mktemp)"
-    cat > "$askpass" <<'ASKPASS'
-#!/usr/bin/env bash
-case "$1" in
-  *Username*) printf 'x-access-token\n' ;;
-  *Password*) printf '%s\n' "$GITHUB_TOKEN" ;;
-  *) printf '\n' ;;
-esac
-ASKPASS
-    chmod 700 "$askpass"
-    export GIT_ASKPASS="$askpass"
-    export GIT_TERMINAL_PROMPT=0
+  local depth_args=()
+  if [ -n "${REPO_DEPTH:-}" ]; then
+    depth_args=(--depth "$REPO_DEPTH")
   fi
 
   if [ -n "${REPO_BRANCH:-}" ]; then
-    git clone --depth 1 --branch "$REPO_BRANCH" "$repo_url" "$WORKSPACE_DIR"
+    git clone "${depth_args[@]}" --branch "$REPO_BRANCH" "$repo_url" "$WORKSPACE_DIR"
   else
-    git clone --depth 1 "$repo_url" "$WORKSPACE_DIR"
-  fi
-
-  if [ -n "$askpass" ]; then
-    rm -f "$askpass"
+    git clone "${depth_args[@]}" "$repo_url" "$WORKSPACE_DIR"
   fi
 }
 
@@ -62,6 +50,10 @@ configure_git_defaults() {
   git config --global user.name "${GIT_AUTHOR_NAME:-opencode on Render}"
   git config --global user.email "${GIT_AUTHOR_EMAIL:-opencode@render.example}"
   git config --global --add safe.directory "$WORKSPACE_DIR"
+  # Clear inherited helpers, then route github.com through the token helper
+  # so the agent can pull AND push for the lifetime of the service.
+  git config --global --add credential.helper ""
+  git config --global --add credential.https://github.com.helper /usr/local/bin/git-credential-github
 }
 
 ensure_workspace_project() {

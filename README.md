@@ -12,6 +12,7 @@ Run opencode as a hosted AI coding agent with the browser UI and `opencode attac
 - A `standard` instance to avoid OOM loops on startup and active agent sessions
 - A 1 GB persistent disk for opencode state and your working tree
 - Optional repo cloning into `/root/project-data/workspace` on first boot
+- GitHub CLI (`gh`) and token-based push/pull access to private repos
 - The Render OpenCode plugin installed by default
 
 ## How to use it
@@ -64,11 +65,34 @@ REPO_URL=https://github.com/your-org/your-repo.git
 REPO_BRANCH=main
 ```
 
-For a private GitHub repo, also set `GITHUB_TOKEN` to a token that can read the repo.
+### Private GitHub repo example
 
-The startup script only clones when `/root/project-data/workspace` is empty. If `/root/project-data/workspace` already has files, it leaves them alone.
+To run the agent against a private repo such as `sensei-radical-transparency/sensei`, set:
+
+```txt
+REPO_URL=https://github.com/sensei-radical-transparency/sensei.git
+REPO_BRANCH=main
+GITHUB_TOKEN=<your token>
+```
+
+Create the token at <https://github.com/settings/personal-access-tokens/new> as a fine-grained token:
+
+- Repository access: only select the `sensei` repo
+- Permissions: `Contents` -> Read and write (clone, commit, push), `Pull requests` -> Read and write, `Metadata` -> Read-only
+
+The startup script configures a git credential helper that reads `GITHUB_TOKEN` from the environment, so inside the web UI the agent can `git pull`, `git push`, and push branches without the token being stored in the repo or on disk. The `gh` CLI also picks up `GITHUB_TOKEN` automatically, so the agent can run `gh pr create`, `gh issue list`, and `gh pr checks` right away.
+
+The startup script only clones when `/root/project-data/workspace` is empty. If `/root/project-data/workspace` already has files, it leaves them alone. On an existing deployment, either delete the disk (or the service) and redeploy, or ask the agent to run `git clone https://github.com/sensei-radical-transparency/sensei.git /root/project-data/workspace` itself.
 
 If you do not set `REPO_URL`, the service creates a small default Git project in `/root/project-data/workspace` so the web UI has a project to open.
+
+### Clone depth
+
+Clones are full by default so pushing branches and PRs works reliably. To save time and disk on a large repo, set:
+
+```txt
+REPO_DEPTH=1
+```
 
 ## Server command
 

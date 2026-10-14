@@ -13,6 +13,15 @@ RUN apt-get update \
         git \
     && rm -rf /var/lib/apt/lists/*
 
+# GitHub CLI so the agent can manage pull requests, issues, and checks.
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        -o /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN npm install -g \
         opencode-ai@latest \
         typescript-language-server@latest \
@@ -25,7 +34,8 @@ RUN curl -fsSL https://raw.githubusercontent.com/render-oss/render-opencode-plug
 WORKDIR /workspace
 
 COPY start.sh /usr/local/bin/start-opencode
-RUN chmod +x /usr/local/bin/start-opencode
+COPY git-credential-github /usr/local/bin/git-credential-github
+RUN chmod +x /usr/local/bin/start-opencode /usr/local/bin/git-credential-github
 
 EXPOSE 10000
 
