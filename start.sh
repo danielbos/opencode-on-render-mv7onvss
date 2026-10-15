@@ -238,4 +238,5 @@ case "$OPENCODE_SERVER_COMMAND" in
 esac
 
 cd "$WORKSPACE_DIR"
-exec opencode serve --hostname 0.0.0.0 --port "${PORT:-10000}"
+echo "start-opencode: OpenCode V2 server starting on 0.0.0.0:${PORT:-10000} ($(date -u +%FT%TZ))"
+exec opencode serve --hostname 0.0.0.0 --port "${PORT:-10000}" --print-logs
