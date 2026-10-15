@@ -192,24 +192,15 @@ write_project_config_if_missing() {
     return
   fi
 
+  # V2 permission rules (V1's `permission`/`bash` keys are ignored by opencode
+  # V2, which makes the agent fall back to `ask` for everything). This blanket
+  # allow gives the hosted agent full mandate over fs, shell, and subagents.
   cat > "$WORKSPACE_DIR/opencode.json" <<'JSON'
 {
   "$schema": "https://opencode.ai/config.json",
-  "agent": {
-    "build": {
-      "mode": "primary",
-      "permission": {
-        "read": "allow",
-        "edit": "ask",
-        "bash": "ask",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "allow",
-        "websearch": "allow",
-        "lsp": "allow"
-      }
-    }
-  }
+  "permissions": [
+    { "action": "*", "resource": "*", "effect": "allow" }
+  ]
 }
 JSON
 }
