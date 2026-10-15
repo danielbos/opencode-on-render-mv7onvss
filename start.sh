@@ -140,8 +140,43 @@ config.mcp.render = {
   },
 };
 
+// Alibaba Token Plan (Singapore). Custom OpenAI-compatible provider; these
+// model IDs are not in the public models.dev catalog under this name, so the
+// whole models block is declared here. Limits match the plan's real numbers
+// (see ~/.config/opencode/opencode.json on the author's dev machine).
+if (process.env.ALIBABA_API_KEY) {
+  config.provider = config.provider && typeof config.provider === "object" && !Array.isArray(config.provider)
+    ? config.provider
+    : {};
+
+  config.provider["alibaba-sg"] = {
+    npm: "@ai-sdk/openai-compatible",
+    name: "Alibaba Token Plan (SG)",
+    options: {
+      baseURL: "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+      apiKey: "{env:ALIBABA_API_KEY}",
+    },
+    models: {
+      auto: { name: "Qwen Auto", limit: { context: 1000000, input: 983616, output: 65536 }, modalities: { input: ["text", "image", "video"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "qwen3.8-max": { name: "Qwen 3.8 Max", limit: { context: 1000000, input: 983616, output: 131072 }, modalities: { input: ["text", "image", "video", "pdf"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "qwen3.8-flash": { name: "Qwen 3.8 Flash", limit: { context: 1000000, input: 983616, output: 131072 }, modalities: { input: ["text", "image", "video"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "qwen3.7-max": { name: "Qwen 3.7 Max", limit: { context: 1000000, input: 983616, output: 131072 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+      "qwen3.7-plus": { name: "Qwen 3.7 Plus", limit: { context: 1000000, input: 983616, output: 65536 }, modalities: { input: ["text", "image", "video"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "qwen3.6-flash": { name: "Qwen 3.6 Flash", limit: { context: 1000000, input: 983616, output: 65536 }, modalities: { input: ["text", "image", "video"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "deepseek-v4-pro": { name: "DeepSeek V4 Pro (Alibaba)", limit: { context: 1000000, input: 1000000, output: 384000 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+      "deepseek-v4-pro-0813": { name: "DeepSeek V4 Pro 0813 (Alibaba)", limit: { context: 1000000, input: 1000000, output: 384000 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+      "deepseek-v4.1-flash": { name: "DeepSeek V4.1 Flash (Alibaba)", limit: { context: 1000000, input: 1000000, output: 384000 }, modalities: { input: ["text", "image"], output: ["text"] }, reasoning: true, tool_call: true, attachment: true },
+      "deepseek-v4-flash-0731": { name: "DeepSeek V4 Flash 0731 (Alibaba)", limit: { context: 1000000, input: 1000000, output: 384000 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+      "glm-5.3": { name: "GLM 5.3 (Alibaba)", limit: { context: 1000000, input: 1000000, output: 131072 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+      "glm-5.2": { name: "GLM 5.2 (Alibaba)", limit: { context: 1000000, input: 1000000, output: 131072 }, modalities: { input: ["text"], output: ["text"] }, reasoning: true, tool_call: true, attachment: false },
+    },
+  };
+}
+
 if (process.env.OPENCODE_MODEL) {
   config.model = process.env.OPENCODE_MODEL;
+} else if (process.env.ALIBABA_API_KEY) {
+  config.model = "alibaba-sg/deepseek-v4.1-flash";
 }
 if (process.env.OPENCODE_SMALL_MODEL) {
   config.small_model = process.env.OPENCODE_SMALL_MODEL;

@@ -115,6 +115,7 @@ OPENCODE_SERVER_COMMAND=serve
 Set one or more provider keys once in the Render Dashboard (Environment tab). They are written into opencode's auth file on every boot, so you never have to enter them in the UI:
 
 - `ANTHROPIC_API_KEY` unlocks Anthropic models.
+- `ALIBABA_API_KEY` unlocks the Alibaba Token Plan (Singapore) provider (`alibaba-sg`) — the Qwen / DeepSeek / GLM models included in your Alibaba subscription.
 - `OPENAI_API_KEY` unlocks OpenAI models.
 - `OPENROUTER_API_KEY` unlocks OpenRouter models.
 - `GEMINI_API_KEY` (or `GOOGLE_GENERATIVE_AI_API_KEY`) unlocks Google models.
@@ -136,7 +137,9 @@ To preselect the model the agent starts with, set:
 OPENCODE_MODEL=anthropic/claude-sonnet-4-5
 ```
 
-Use the `provider/model` format. Any model from a provider you configured a key for works, for example `openai/gpt-5`, `google/gemini-2.5-pro`, or `openrouter/deepseek/deepseek-chat-v3.1`. Optionally set `OPENCODE_SMALL_MODEL` for the cheaper model opencode uses for background tasks like title generation:
+Use the `provider/model` format. Any model from a provider you configured a key for works, for example `openai/gpt-5`, `google/gemini-2.5-pro`, or `openrouter/deepseek/deepseek-chat-v3.1`.
+
+If `ALIBABA_API_KEY` is set and `OPENCODE_MODEL` is not, the default is `alibaba-sg/deepseek-v4.1-flash` (the recommended balance model of the Alibaba Token Plan). Other pickable Alibaba models include `alibaba-sg/qwen3.8-max`, `alibaba-sg/deepseek-v4-pro`, `alibaba-sg/glm-5.3`, and `alibaba-sg/auto`. Optionally set `OPENCODE_SMALL_MODEL` for the cheaper model opencode uses for background tasks like title generation:
 
 ```txt
 OPENCODE_SMALL_MODEL=anthropic/claude-haiku-4-5
