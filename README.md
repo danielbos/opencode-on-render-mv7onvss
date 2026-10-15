@@ -9,7 +9,7 @@ Run opencode as a hosted AI coding agent with the browser UI and `opencode attac
 - A single Render Web Service running `opencode web`
 - The built-in opencode web UI on your Render URL
 - Remote TUI access with `opencode attach`
-- A `pro_plus` instance to avoid OOM loops on startup and active agent sessions
+- A `4c-16g` instance (4 CPU / 16 GB) to avoid OOM loops on startup and active agent sessions
 - A 1 GB persistent disk for opencode state and your working tree
 - Optional repo cloning into `/root/project-data/workspace` on first boot
 - GitHub CLI (`gh`) and token-based push/pull access to private repos
@@ -159,7 +159,7 @@ Do not use this template with untrusted users, untrusted prompts, or repos you d
 
 ## Instance size
 
-The template uses Render's `pro_plus` plan (4 CPU / 8 GB) by default to give several parallel agent sessions room, especially with the web UI, provider metadata, plugins, MCP tools, and active coding sessions. Scale up or down in `render.yaml` under `plan:`:
+The template uses Render's `4c-16g` plan (4 CPU / 16 GB) by default to give several parallel agent sessions room, especially with the web UI, provider metadata, plugins, MCP tools, and active coding sessions. Scale up or down in `render.yaml` under `plan:`:
 
 ## What's pre-wired
 
