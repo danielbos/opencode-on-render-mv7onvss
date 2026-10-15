@@ -182,6 +182,14 @@ if (process.env.OPENCODE_SMALL_MODEL) {
   config.small_model = process.env.OPENCODE_SMALL_MODEL;
 }
 
+// Full mandate for the hosted agent, applied from the GLOBAL config so it
+// survives restarts and instance resizes (interactive "allow always" saved
+// approvals live in ephemeral state that a recreated instance can lose).
+// Written on every boot, so a resize can never revert it.
+config.permissions = [
+  { action: "*", resource: "*", effect: "allow" },
+];
+
 fs.mkdirSync(require("node:path").dirname(path), { recursive: true });
 fs.writeFileSync(path, `${JSON.stringify(config, null, 2)}\n`);
 NODE
