@@ -9,7 +9,7 @@ Run opencode as a hosted AI coding agent with the browser UI and `opencode attac
 - A single Render Web Service running `opencode web`
 - The built-in opencode web UI on your Render URL
 - Remote TUI access with `opencode attach`
-- A `standard` instance to avoid OOM loops on startup and active agent sessions
+- A `pro_plus` instance to avoid OOM loops on startup and active agent sessions
 - A 1 GB persistent disk for opencode state and your working tree
 - Optional repo cloning into `/root/project-data/workspace` on first boot
 - GitHub CLI (`gh`) and token-based push/pull access to private repos
@@ -112,15 +112,37 @@ OPENCODE_SERVER_COMMAND=serve
 
 ## Configured providers
 
-Set one or more provider keys in Render:
+Set one or more provider keys once in the Render Dashboard (Environment tab). They are written into opencode's auth file on every boot, so you never have to enter them in the UI:
 
 - `ANTHROPIC_API_KEY` unlocks Anthropic models.
+- `OPENAI_API_KEY` unlocks OpenAI models.
 - `OPENROUTER_API_KEY` unlocks OpenRouter models.
+- `GEMINI_API_KEY` (or `GOOGLE_GENERATIVE_AI_API_KEY`) unlocks Google models.
+- `GROQ_API_KEY` unlocks Groq models.
+- `MISTRAL_API_KEY` unlocks Mistral models.
+- `XAI_API_KEY` unlocks xAI (Grok) models.
+- `DEEPSEEK_API_KEY` unlocks DeepSeek models.
 - `RENDER_API_KEY` unlocks Render MCP tools.
 
-The service writes these keys into `/root/project-data/opencode/auth.json` using opencode's API-key auth format.
+The service writes these keys into `/root/project-data/opencode/auth.json` using opencode's API-key auth format. That file lives on the persistent disk, so keys you enter manually in the UI also survive restarts and redeploys — but env vars are the way to make them survive a disk wipe or a fresh deploy.
 
 Anthropic OAuth is not supported in this hosted setup. Use `ANTHROPIC_API_KEY`.
+
+### Default model
+
+To preselect the model the agent starts with, set:
+
+```txt
+OPENCODE_MODEL=anthropic/claude-sonnet-4-5
+```
+
+Use the `provider/model` format. Any model from a provider you configured a key for works, for example `openai/gpt-5`, `google/gemini-2.5-pro`, or `openrouter/deepseek/deepseek-chat-v3.1`. Optionally set `OPENCODE_SMALL_MODEL` for the cheaper model opencode uses for background tasks like title generation:
+
+```txt
+OPENCODE_SMALL_MODEL=anthropic/claude-haiku-4-5
+```
+
+You can still switch models per session in the UI; these env vars only set the starting default on boot.
 
 ## Security notes
 
@@ -134,9 +156,7 @@ Do not use this template with untrusted users, untrusted prompts, or repos you d
 
 ## Instance size
 
-The template uses Render's `standard` plan by default.
-
-opencode can exceed the memory available on `starter`, especially with the web UI, provider metadata, plugins, MCP tools, and active coding sessions.
+The template uses Render's `pro_plus` plan (4 CPU / 8 GB) by default to give several parallel agent sessions room, especially with the web UI, provider metadata, plugins, MCP tools, and active coding sessions. Scale up or down in `render.yaml` under `plan:`:
 
 ## What's pre-wired
 

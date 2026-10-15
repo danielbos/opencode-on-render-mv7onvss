@@ -92,7 +92,13 @@ try {
 
 const providers = {
   anthropic: process.env.ANTHROPIC_API_KEY,
+  openai: process.env.OPENAI_API_KEY,
   openrouter: process.env.OPENROUTER_API_KEY,
+  google: process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+  groq: process.env.GROQ_API_KEY,
+  mistral: process.env.MISTRAL_API_KEY,
+  xai: process.env.XAI_API_KEY,
+  deepseek: process.env.DEEPSEEK_API_KEY,
 };
 
 for (const [provider, key] of Object.entries(providers)) {
@@ -133,6 +139,13 @@ config.mcp.render = {
     Authorization: "Bearer {env:RENDER_API_KEY}",
   },
 };
+
+if (process.env.OPENCODE_MODEL) {
+  config.model = process.env.OPENCODE_MODEL;
+}
+if (process.env.OPENCODE_SMALL_MODEL) {
+  config.small_model = process.env.OPENCODE_SMALL_MODEL;
+}
 
 fs.mkdirSync(require("node:path").dirname(path), { recursive: true });
 fs.writeFileSync(path, `${JSON.stringify(config, null, 2)}\n`);

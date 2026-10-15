@@ -7,7 +7,7 @@ services:
     name: opencode
     runtime: docker
     region: oregon
-    plan: standard
+    plan: pro_plus
     dockerfilePath: ./Dockerfile
     dockerContext: .
     disk:
@@ -23,7 +23,23 @@ services:
         value: web
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: OPENAI_API_KEY
+        sync: false
       - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: XAI_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: OPENCODE_MODEL
+        sync: false
+      - key: OPENCODE_SMALL_MODEL
         sync: false
       - key: RENDER_API_KEY
         sync: false
