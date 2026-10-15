@@ -25,10 +25,10 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 # Pin an explicit opencode version so upgrades are deliberate and bust the
 # build cache (a plain `@latest` step gets skipped when the layer is cached,
 # so deploys silently keep serving the older binary). To upgrade, bump
-# OPENCODE_VERSION and redeploy. Find the newest with: npm view opencode-ai version
-ARG OPENCODE_VERSION=1.19.0
+# OPENCODE_VERSION and redeploy. Find the newest with: npm view @opencode/cli version
+ARG OPENCODE_VERSION=2.0.29
 RUN npm install -g \
-        opencode-ai@${OPENCODE_VERSION} \
+        @opencode/cli@${OPENCODE_VERSION} \
         typescript-language-server@latest \
         typescript@latest \
     && npm cache clean --force

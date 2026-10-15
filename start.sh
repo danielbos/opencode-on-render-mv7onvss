@@ -224,6 +224,10 @@ write_auth_file
 write_global_config
 write_project_config_if_missing
 
+# OpenCode V2 serves the web UI and the HTTP API from a single `serve`
+# process. HTTP basic auth is enabled when OPENCODE_SERVER_PASSWORD is set
+# (username defaults to "opencode", override with OPENCODE_SERVER_USERNAME).
+# Both legacy command values map to `serve`; the web UI is built in.
 case "$OPENCODE_SERVER_COMMAND" in
   web|serve)
     ;;
@@ -234,4 +238,4 @@ case "$OPENCODE_SERVER_COMMAND" in
 esac
 
 cd "$WORKSPACE_DIR"
-exec opencode "$OPENCODE_SERVER_COMMAND" --hostname 0.0.0.0 --port "${PORT:-10000}"
+exec opencode serve --hostname 0.0.0.0 --port "${PORT:-10000}"

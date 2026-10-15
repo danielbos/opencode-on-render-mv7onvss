@@ -28,10 +28,10 @@ Log in with:
 
 ### From your terminal
 
-Install opencode locally:
+Install opencode V2 locally (same version as this template):
 
 ```bash
-npm install -g opencode-ai
+npm install -g @opencode/cli
 ```
 
 Attach to your hosted backend:
@@ -96,19 +96,21 @@ REPO_DEPTH=1
 
 ## Server command
 
-The template defaults to:
+OpenCode V2 serves the web UI and the HTTP API from one `serve` process, so both values run `opencode serve` on your Render port:
 
 ```txt
 OPENCODE_SERVER_COMMAND=web
 ```
 
-That starts opencode's web UI and API on the same Render URL.
+The web UI is available by default at your Render URL, protected with HTTP basic auth (`opencode` / the generated `OPENCODE_SERVER_PASSWORD`).
 
-If `opencode attach` returns HTML instead of API responses, switch to the headless server:
+If `opencode attach` returns HTML instead of API responses, set:
 
 ```txt
 OPENCODE_SERVER_COMMAND=serve
 ```
+
+Both map to the same `serve` command on V2; the setting is kept for compatibility with this template's history.
 
 ## Configured providers
 
